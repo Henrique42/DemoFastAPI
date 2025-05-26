@@ -1,8 +1,7 @@
-from datetime import datetime  
 from enum import Enum  
 from typing import List, Optional
   
-from pydantic import BaseModel, ConfigDict, Field  
+from pydantic import BaseModel, ConfigDict, EmailStr, Field  
   
 class Status(Enum):  
     Success = "Successo"  
@@ -18,7 +17,7 @@ class ClienteBaseModel(BaseModel):
             "description": "Nome do cliente",  
         },  
     )
-    email: Optional[str] = Field(  
+    email: Optional[EmailStr] = Field(  
         default=None,  
         json_schema_extra={  
             "example": "exemplo@email.com",  

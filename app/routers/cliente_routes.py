@@ -1,5 +1,3 @@
-from typing import Dict  
-  
 from fastapi import APIRouter, Depends, status, Query
 from sqlalchemy.orm import Session  
   
@@ -76,15 +74,6 @@ def delete_cliente(
 
 # Paginação
 
-# Define a dependency function that returns the pagination parameters
-def get_pagination_params(
-    # page must be greater than 0
-    page: int = Query(1, gt=0),
-    # per_page must be greater than 0
-    per_page: int = Query(10, gt=0)
-):
-    return {"page": page, "per_page": per_page}
-
 @router.get(
     "/cliente",
     status_code=status.HTTP_200_OK,
@@ -92,10 +81,10 @@ def get_pagination_params(
 )
 def get_clientes(
     db: Session = Depends(get_db),
-    skip: int = Query(0, ge=0, description="Number of items to skip"),
-    limit: int = Query(10, gt=0, le=100, description="Max number of items to return"),
+    skip: int = Query(0, ge=0, description="Número de itens para pular"),
+    limit: int = Query(10, gt=0, le=100, description="Número máximo de itens a serem retornados"),
 ) -> schemas.ClienteListResponseModel:
     """
-    Listar propriedades with pagination.
+    Listar todos os clientes (com paginação).
     """
     return get_clientes_crud(db=db, skip=skip, limit=limit)
