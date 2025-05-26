@@ -1,6 +1,6 @@
 # Importa as funções para criar o mecanismo de conexão com o banco de dados e iniciar sessões
 from sqlalchemy import create_engine
-from sqlalchemy.orm import sessionmaker
+from sqlalchemy.orm import declarative_base, sessionmaker
 
 # Importa o módulo os para acessar variáveis de ambiente
 import os
@@ -17,6 +17,9 @@ engine = create_engine(SQLALCHEMY_DATABASE_URL)
 
 # Cria uma fábrica de sessões do SQLAlchemy com a engine configurada
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
+
+# Cria a classe base que será usada como superclasse para os modelos
+Base = declarative_base()
 
 # Função geradora que fornece uma sessão de banco de dados
 def get_db():

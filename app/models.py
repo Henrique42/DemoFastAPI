@@ -1,14 +1,10 @@
-# Importa a função para criar uma classe base para os modelos ORM
-from sqlalchemy.ext.declarative import declarative_base
-
 # Importa os tipos de colunas do SQLAlchemy
 from sqlalchemy import Column, Integer, String, Boolean
 
-# Cria a classe base que será usada como superclasse para os modelos
-Base = declarative_base()
+from app.database import Base
 
 # Define a classe Clientes, que representa a tabela 'clientes' no banco de dados
-class Clientes(Base):
+class ClienteOrm(Base):
     # Define o nome da tabela no banco de dados
     __tablename__ = "clientes"
 
