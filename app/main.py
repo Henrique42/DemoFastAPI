@@ -3,7 +3,7 @@ from fastapi.middleware.cors import CORSMiddleware
   
 from app import models  
 from app.database import engine  
-from app.routers import cliente_routes, produto_routes
+from app.routers import cliente_routes, pedido_routes, produto_routes
 
 models.Base.metadata.create_all(bind=engine)  
   
@@ -24,6 +24,7 @@ app.add_middleware(
   
 app.include_router(cliente_routes.router, tags=["Cliente"], prefix="/api/v1/clientes")
 app.include_router(produto_routes.router, tags=["Produto"], prefix="/api/v1/produtos")  
+app.include_router(pedido_routes.router, tags=["Pedido"], prefix="/api/v1/pedidos")  
 
 @app.get("/")  
 def root():  

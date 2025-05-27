@@ -105,31 +105,35 @@ def update_cliente_crud( cliente_id: str, payload: schemas.ClienteUpdateModel, d
         ) from e  
   
   
-def delete_cliente_crud(cliente_id: str, db: Session = Depends(get_db)):  
-    try:  
-        cliente_query = db.query(models.ClienteOrm).filter(  
-            models.ClienteOrm.id == cliente_id  
-        )  
-        cliente_ = cliente_query.first()  
-        if not cliente_:  
-            raise HTTPException(  
-                status_code=status.HTTP_404_NOT_FOUND,  
-                detail=f"Não foi encontrado nenhum cliente com o ID: {cliente_id}",  
-            )  
-        cliente_query.delete(synchronize_session=False)  
-        db.commit()  
-        return schemas.ClienteDeleteModel(  
-            id=cliente_id,  
-            status=schemas.Status.Success,  
-            message="Cliente removido com successo.",  
-        )  
-    except Exception as e:  
-        db.rollback()  
-        raise HTTPException(  
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,  
-            detail="Um erro ocorreu ao tentar remover o cliente.",  
-        ) from e  
-  
+def delete_cliente_crud(cliente_id: int, db: Session = Depends(get_db)):
+    try:
+        cliente_ = db.query(models.ClienteOrm).filter(models.ClienteOrm.id == cliente_id).first()
+        if not cliente_:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail=f"Não foi encontrado nenhum cliente com o ID: {cliente_id}",
+            )
+        
+        # Apaga pedidos associados manualmente
+        pedidos_assoc = db.query(models.PedidoOrm).filter(models.PedidoOrm.cliente_id == cliente_id).all()
+        for pedido in pedidos_assoc:
+            db.delete(pedido)
+        
+        # Apaga o cliente
+        db.delete(cliente_)
+        db.commit()
+        
+        return schemas.ClienteDeleteModel(
+            id=cliente_id,
+            status=schemas.Status.Success,
+            message="Cliente removido com sucesso.",
+        )
+    except Exception as e:
+        db.rollback()
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"Um erro ocorreu ao tentar remover o cliente. Erro: {str(e)}",
+        ) from e
   
 def get_clientes_crud( db: Session = Depends(get_db), limit: int = 10, skip: int = 0, page: int = 1, search: str = ""):  
   
